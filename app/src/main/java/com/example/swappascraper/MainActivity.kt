@@ -12,13 +12,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),
+Adapter.Callback{
 
     private lateinit var recyclerView: RecyclerView
-    private val adapter = Adapter() { item ->
-        showDeleteDialog(item)
-    }
-    private val database: ProductDatabase = ProductDatabase.getDatabase(this.applicationContext)
+    private val adapter = Adapter(this)
+    private val database: ProductDatabase by lazy {ProductDatabase.getDatabase(this.applicationContext)}
 
     private lateinit var fab: FloatingActionButton
 
@@ -28,7 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         fab = floating_action_button
         fab.setOnClickListener {
-
+            AddProductDialog.newInstance().show(supportFragmentManager, "add_product_dialog")
         }
 
         recyclerView = recycler
@@ -56,5 +55,15 @@ class MainActivity : AppCompatActivity() {
                 p0?.dismiss() }
             .setNegativeButton("No"
             ) { p0, p1 -> p0?.dismiss() }
+
+        dialog.show()
+    }
+
+    override fun longClick(product: Product) {
+        showDeleteDialog(product)
+    }
+
+    override fun shortClick(product: Product) {
+        AddProductDialog.newInstance(product).show(supportFragmentManager, "add_product_dialog")
     }
 }

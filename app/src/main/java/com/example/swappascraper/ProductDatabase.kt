@@ -27,12 +27,12 @@ abstract class ProductDatabase : RoomDatabase() {
                         ProductDatabase::class.java,
                         "product_database")
                         .fallbackToDestructiveMigration()
-                        .addCallback(object : RoomDatabase.Callback() {
-                            override fun onOpen(db: SupportSQLiteDatabase) {
-                                super.onOpen(db)
-                                db.execSQL("DELETE FROM ${Product.TABLE_NAME}")
-                            }
-                        })
+//                        .addCallback(object : RoomDatabase.Callback() {
+//                            override fun onOpen(db: SupportSQLiteDatabase) {
+//                                super.onOpen(db)
+//                                db.execSQL("DELETE FROM ${Product.TABLE_NAME}")
+//                            }
+//                        })
                         .build()
                     INSTANCE = instance
                     return instance

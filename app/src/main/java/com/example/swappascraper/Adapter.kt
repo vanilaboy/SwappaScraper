@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class Adapter(private val longClick: (item: Product) -> Unit) : RecyclerView.Adapter<Adapter.Holder>() {
+class Adapter(private val callback: Callback) : RecyclerView.Adapter<Adapter.Holder>() {
 
     var list: ArrayList<Product> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(LayoutInflater.from(parent.context)
-            .inflate(R.layout.recycler_element, parent, false), longClick)
+            .inflate(R.layout.recycler_element, parent, false))
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -28,7 +28,7 @@ class Adapter(private val longClick: (item: Product) -> Unit) : RecyclerView.Ada
 
 
 
-    class Holder(itemView: View, callback: (item: Product) -> Unit): RecyclerView.ViewHolder(itemView) {
+    inner class Holder(itemView: View): RecyclerView.ViewHolder(itemView) {
         private val nameField = itemView.findViewById<TextView>(R.id.productName)
         private val priceField = itemView.findViewById<TextView>(R.id.minimumPrice)
 
@@ -36,8 +36,11 @@ class Adapter(private val longClick: (item: Product) -> Unit) : RecyclerView.Ada
 
         init {
             itemView.setOnLongClickListener {
-                current?.let { it1 -> callback(it1) }
+                current?.let { it1 -> callback.longClick(it1) }
                 return@setOnLongClickListener true
+            }
+            itemView.setOnClickListener {
+                current?.let { it1 -> callback.shortClick(it1) }
             }
         }
 
@@ -47,4 +50,10 @@ class Adapter(private val longClick: (item: Product) -> Unit) : RecyclerView.Ada
             current = product
         }
     }
+
+    interface Callback {
+        fun longClick(product: Product)
+        fun shortClick(product: Product)
+    }
+
 }
